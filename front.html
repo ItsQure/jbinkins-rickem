@@ -1,12 +1,271 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
+<style>
+div.offer {
+    text-align: center;
+    margin: auto;
+}
+div.deal {
+    text-align: center;
+    margin: auto;
+}
+div.game {
+    background-color: lightgreen;
+    padding: 20px;
+    border: 2px solid black;
 
-    <meta charset="utf-8">
-    <title>jayce-kun Adventure po site</title>
-  </head>
-  <body>
-    <p>fook</p>
+}
+button {
+    box-shadow: 3px 3px gray;
+    background-color: lightblue;
+    color: black;
+    padding: 5px 10px;
+    font-size: 16px;
+    width: 90px;
+    height: 50px;
+    margin: 10px 10px;
+}
+button.deal {
+        background-color: green;
+        color: gold;
+        font-size: 12px;
+        padding: auto;
+        margin: auto;
+        width: 110px;
+        display: inline-block;
+        white-space: nowrap;
+    }
 
-  </body>
+table.buttontable {
+    float: left;
+    margin: 10px 150px 10px 10px;
+}
+table.checktable {
+    display: inline-block;
+    margin: 10px;
+}
+</style>
+<html>
+    <head>
+        <script>
+            //Function for start new game button. Unchecks and enables all check boxes, assigns values to buttons 1-10
+
+            function initializeGame()
+            {
+                var uncheck = document.getElementsByTagName("input");
+                for(var i=0;i < uncheck.length;i++)
+                {
+                    if(uncheck[i].type == "checkbox")
+                    {
+                        uncheck[i].checked = false;
+                        uncheck[i].disabled = false;
+                    }
+
+                }
+
+                var money = [0.01,1,5,10,100,1000,10000,100000,500000,1000000];
+
+                //Randomly assign buttons 1-10 values from money array
+                var randomVals = [];
+                for(var i = 0;i <10;i++)
+                {
+                    randomVals.push(Math.random());
+                }
+
+                var sortedVals = randomVals.slice();
+                sortedVals.sort();
+
+                for(var i = 0;i < 10;i++)
+                {
+                    var name = "button" + (i+1);
+                    var but = document.getElementById(name);
+                    but.value = money[sortedVals.indexOf(randomVals[i])];
+                    but.disabled = false;
+                    but.textContent = i+1;
+                    but.style.backgroundColor = "lightblue";
+                    but.style.color = "black";
+                }
+                prev = null;
+                var offer = document.getElementById("Offer");
+                offer.textContent = null;
+                offer.value = 0;
+            }
+
+            //Onclick event for buttons
+            var prev = null;
+            function selectedSuit(clicked_name)
+            {
+                var allChecked = true;
+                if(prev !== null)
+                {
+                    //If not suitcase, reveal amount and check appropriate box
+                    var money = [0.01,1,5,10,100,1000,10000,100000,500000,1000000];
+                    var obj = document.getElementById(clicked_name);
+                    obj.style.backgroundColor="yellow";
+                    obj.disabled = true;
+                    obj.style.color = "black";
+                    obj.textContent = '$' + obj.value;
+
+                    var name = "check" + (money.indexOf(parseFloat(obj.value)) + 1);
+                    document.getElementById(name).checked = true;
+
+                    //Sets offer to 90% of remaining cases
+                    var offer = document.getElementById("Offer");
+                    var off = 0;
+                    for(var i = 1;i <=10;i++)
+                    {
+                        var name = "button" + (i);
+                        var but = document.getElementById(name);
+                        if(but.disabled == false)
+                        {
+                            allChecked = false;
+                            off += parseFloat(but.value);
+                        }
+
+                    }
+                    offer.textContent = parseInt(off * 0.9);
+                    offer.value = parseInt(off * 0.9);
+
+                    //If all suitcases are selected, the game automatically ends
+                    if(allChecked)
+                    {
+                        document.getElementById(prev).textContent = '$' + document.getElementById(prev).value;
+                        alert("Game over. You won $" + document.getElementById(prev).value);
+                    }
+                }
+                else
+                {
+                    document.getElementById(clicked_name).style.color='#C0C0C0';
+                    document.getElementById(clicked_name).style.backgroundColor='blue';
+                    document.getElementById(clicked_name).disabled = true;
+                    prev = clicked_name;
+                }
+            }
+
+            function dealOrNah(){
+              for(var i = 0;i < 10;i++)
+              {
+                  var name = "button" + (i+1);
+                  var but = document.getElementById(name);
+                  but.textContent = '$' + but.value;
+                  but.disabled = true;
+              }
+            prev = document.getElementById("Offer").value;
+             alert("Game over. You won $" + prev );
+
+            }
+        </script>
+
+        <h2>Instructions</h2>
+    </head>
+    <body>
+        <div>To play click on the Start Game button.</div> <br>
+        <div>Choose one of the 10 light blue buttons to be your suitcase that you may choose to hold until the end of the game.</div> <br>
+        <div>Then choose another button, which corresponds to opening a suitcase with a certain money amount.</div> <br>
+        <div>Then choose between Deal or opening another suitcase. If you choose Deal, then the game ends and you win
+            the amount of money given in the offer box. If you open another suitcase, then you will receive a new offer.
+        </div> <br>
+        <div>Continue in this fashion until you choose Deal or until you have opened all of the suitcases, in which you will win the
+            amount that is in the suitcase you chose at the beginning of the game.
+        </div> <br>
+        <div>To play another game, just click on the Start Game button again.</div> <br>
+        <hr>
+
+        <div class="game">
+        <!--Offer textbox-->
+        <div class="offer"><label for="Offer">Offer</label><input type="text" id="Offer" name="offer" readonly maxlength="7"></input></div>
+        <br>
+
+        <!--button table-->
+        <table class="buttontable">
+            <tr>
+                <td><button type="button" id="button1" onclick="selectedSuit(this.id)" disabled=true>1</button></td>
+                <td><button type="button" id="button2" onclick="selectedSuit(this.id)" disabled=true>2</button></td>
+                <td><button type="button" id="button3" onclick="selectedSuit(this.id)" disabled=true>3</button></td>
+                <td><button type="button" id="button4" onclick="selectedSuit(this.id)" disabled=true>4</button></td>
+                <td><button type="button" id="button5" onclick="selectedSuit(this.id)" disabled=true>5</button></td>
+            </tr>
+            <tr>
+                <td><button type="button" id="button6" onclick="selectedSuit(this.id)" disabled=true>6</button></td>
+                <td><button type="button" id="button7" onclick="selectedSuit(this.id)" disabled=true>7</button></td>
+                <td><button type="button" id="button8" onclick="selectedSuit(this.id)" disabled=true>8</button></td>
+                <td><button type="button" id="button9" onclick="selectedSuit(this.id)" disabled=true>9</button></td>
+                <td><button type="button" id="button10" onclick="selectedSuit(this.id)" disabled=true>10</button></td>
+            </tr>
+        </table>
+        <script>
+
+</script>
+        <!--Checkbox table-->
+        <table class="checkboxtable">
+            <tr>
+                <td>
+                <input type="checkbox" id="check1" name="check1" onclick="return false;" readonly>
+                <label for="check1">$0.01</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <input type="checkbox" id="check2" name="check2" onclick="return false;" readonly>
+                <label for="check2">$1</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <input type="checkbox" id="check3" name="check3" onclick="return false;" readonly>
+                <label for="check3">$5</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <input type="checkbox" id="check4" name="check4" onclick="return false;" readonly>
+                <label for="check4">$10</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <input type="checkbox" id="check5" name="check5" onclick="return false;" readonly>
+                <label for="check5">$100</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <input type="checkbox" id="check6" name="check6" onclick="return false;" readonly>
+                <label for="check6">$1000</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <input type="checkbox" id="check7" name="check7" onclick="return false;" readonly>
+                <label for="check7">$10000</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <input type="checkbox" id="check8" name="check8" onclick="return false;" readonly>
+                <label for="check8">$100000</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <input type="checkbox" id="check9" name="check9" onclick="return false;">
+                <label for="check9">$500000</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                <input type="checkbox" id="check10" name="check10" onclick="return false;" readonly>
+                <label for="check10">$1000000</label>
+                </td>
+            </tr>
+        </table>
+        <br>
+
+        <!--Deal and Start New Game buttons-->
+        <div class="deal">
+            <button class="deal" type="button" name="deal" onclick="dealOrNah()">Deal</button>
+            <button class="deal" type="button" name="startgame" onclick="initializeGame()">Start New Game</button>
+        </div>
+
+        </div>
+    </body>
 </html>
